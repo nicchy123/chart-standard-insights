@@ -4,13 +4,14 @@ import axios from "axios";
 import Chart from "chart.js/auto";
 import "chartjs-plugin-datalabels";
 
+
 const GroupedBarChart: React.FC = () => {
   const chartRef = useRef<Chart>();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any[]>([]);
   const [tableData, setTableData] = useState<any[]>([]);
   const [colors, setColors] = useState<string[]>([]);
-
+  const [questions, setQuestions] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -18,6 +19,12 @@ const GroupedBarChart: React.FC = () => {
           "https://chart-standard-insights-backend.vercel.app/answers/four/new"
         );
         const responseData = response.data?.data;
+
+        const questionsRes = await axios.get(
+          "https://chart-standard-insights-backend.vercel.app/questions"
+        );
+        console.log(questionsRes?.data?.data[3]);
+        setQuestions(questionsRes?.data?.data[3] as any);
 
         if (responseData) {
           setData(responseData);
@@ -56,14 +63,14 @@ const GroupedBarChart: React.FC = () => {
                 labels: chartLabels,
                 datasets: [
                   {
-                    label: "Percentage",
+                    label: "Amount",
                     data: chartData,
                     backgroundColor: generatedColors,
                     borderRadius: 10, // Round corners of bars
                   },
                 ],
               },
-              
+
               options: {
                 scales: {
                   y: {
@@ -74,7 +81,7 @@ const GroupedBarChart: React.FC = () => {
                     },
                   },
                 },
-             
+
                 plugins: {
                   datalabels: {
                     color: "#000",
@@ -114,7 +121,7 @@ const GroupedBarChart: React.FC = () => {
   };
 
   return (
-    <div className="w-[90%] mx-auto my-4 flex lg:flex-row flex-col justify-center items-start gap-3">
+    <div className="lg:w-[90%] w-[100%] mx-auto my-4 flex lg:flex-row flex-col justify-center items-start gap-3">
       <div className="lg:w-[60%] w-[90%] mx-auto h-full border-2 rounded-lg pb-10 pl-3">
         {loading && (
           <div className="w-full h-full flex justify-center items-center">
@@ -125,31 +132,40 @@ const GroupedBarChart: React.FC = () => {
         {!loading && (
           <>
             <div className="flex justify-between items-center">
-              <h1 className="md:text-2xl text-xl font-bold p-2">
-                Grouped Answers Percentage
+              <h1 className="md:text-2xl text-xl font-bold p-2 my-4">
+                {(questions as any)?.question}
               </h1>
             </div>
             <div className="w-full h-full">
               <canvas id="groupedBarChart" width={1200} height={1000}></canvas>
+
+              <div className="my-4">
+                <h3 className="font-semibold">Other :</h3>
+                {(questions as any).otherOptions.map(
+                  (option: string, index: number) => (
+                    <p className="p-1 bg-gray-100 text-sm rounded-md max-w-80" key={index}>{option}</p>
+                  )
+                )}
+              </div>
             </div>
           </>
         )}
       </div>
-      <div className="lg:w-[40%] w-[90%] mx-auto">
-        <table className="border border-black w-[100%]">
+      <div className="lg:w-[40%] w-[90%] mx-auto ">
+        <table className="border border-gray-200 w-[100%] ">
           <thead>
-            <tr className="bg-gray-300">
-              <th className="border border-black p-3">Answers</th>
-              <th className="border border-black p-3">Response</th>
+            <tr className="bg-gray-300 ">
+              <th className="border border-gray-200 p-3">Answers</th>
+              <th className="border border-gray-200 p-3">Response</th>
             </tr>
           </thead>
           <tbody>
             {tableData.map((item, index) => (
               <tr key={index}>
-                <td className="text-sm border p-3 border-black" >
+                <td className="text-sm border p-3 border-gray-200">
                   {item.answer}
                 </td>
-                <td  className="text-sm border p-3 border-black">
+                <td className="text-sm border p-3 border-gray-200">
                   {item.count} ({item.percentage}%)
                 </td>
               </tr>

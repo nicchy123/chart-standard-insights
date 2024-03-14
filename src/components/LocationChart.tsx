@@ -1,9 +1,5 @@
 "use client";
 
-
-
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Chart from "chart.js/auto";
@@ -42,6 +38,21 @@ const LocationChart: React.FC = () => {
             (count) => ((count / totalCount) * 100).toFixed(2) + "%"
           );
 
+          // Define colors for each bar
+          const colors = [
+            "#44F1B6",
+            "#007F73",
+            "#4CCD99",
+            "#FFCE56",
+            "#4BC0C0",
+            "#9966FF",
+            "#FF8C00",
+            "#8A2BE2",
+            "#7FFF00",
+            "#00CED1",
+            // Add more colors as needed
+          ];
+
           // Create Chart instance
           if (chartRef.current) {
             chartRef.current.destroy();
@@ -58,7 +69,7 @@ const LocationChart: React.FC = () => {
                   {
                     label: "Location Count",
                     data: counts,
-                    backgroundColor: "#44F1B6",
+                    backgroundColor: colors,
                     borderRadius: 10,
                     borderWidth: 1,
                   },
@@ -141,8 +152,7 @@ const LocationChart: React.FC = () => {
               </h1>
             </div>
             <div className="max-h-80">
-
-            <canvas id="locationChart" className="w-96 h-60 md:h-80"></canvas>
+              <canvas id="locationChart" className="w-96 h-60 md:h-80"></canvas>
             </div>
           </>
         )}
@@ -152,4 +162,3 @@ const LocationChart: React.FC = () => {
 };
 
 export default LocationChart;
-
